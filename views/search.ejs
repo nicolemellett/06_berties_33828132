@@ -1,15 +1,34 @@
 <!doctype html>
 <html>
   <head>
-    <title>Search <%=shopData.shopName%></title>
+    <title>Search <%= shopData.shopName %></title>
     <link rel="stylesheet"  type="text/css" href="/main.css" />
   </head>
   <body>
-    <h1>Search <%=shopData.shopName%></h1>
-    <form action="search_result" method="GET">
+    <h1>Search <%= shopData.shopName %></h1>
+
+    <form action="/search-result" method="GET">
       <p>What book do you want?</p>
-      <input id="search-box" type="text" name="search_text">
-      <input type="submit" value="Search" >
+      <input id="search-box" type="text" name="keyword" required>
+      <input type="submit" value="Search">
     </form>
+
+    <% if (typeof searchResults !== 'undefined') { %>
+      <h2>Results for "<%= keyword %>":</h2>
+
+      <% if (searchResults.length > 0) { %>
+        <ul>
+          <% searchResults.forEach(function(book) { %>
+            <li>
+              <strong>Title:</strong> <%= book.name %> — 
+              <strong>Price (£):</strong> £<%= book.price %>
+            </li>
+          <% }); %>
+        </ul>
+      <% } else { %>
+        <p>No books found matching "<%= keyword %>".</p>
+      <% } %>
+    <% } %>
+
   </body>
 </html>
