@@ -2,14 +2,22 @@
 var express = require ('express')
 var ejs = require('ejs')
 const path = require('path')
+require('dotenv').config();
 var mysql = require('mysql2');
 
 // Create the express application object
 const app = express()
 const port = 8000
+const usersRouter = require('./routes/users');
+
+app.use(express.urlencoded({ extended: true })); // for form submissions
+app.use(express.json()); // optional, if you also send JSON
+
 
 // Tell Express that we want to use EJS as the templating engine
 app.set('view engine', 'ejs')
+
+app.use('/users', usersRouter);
 
 // Set up the body parser 
 app.use(express.urlencoded({ extended: true }))
@@ -21,15 +29,25 @@ app.use(express.static(path.join(__dirname, 'public')))
 app.locals.shopData = {shopName: "Bertie's Books"}
 
 // Define the database connection pool
+//const db = mysql.createPool({
+   // host: 'localhost',
+   // user: 'berties_books_app',
+  //  password: 'qwertyuiop',
+  //  database: 'berties_books',
+   // waitForConnections: true,
+ //   connectionLimit: 10,
+  //  queueLimit: 0,
+//});
 const db = mysql.createPool({
-    host: 'localhost',
-    user: 'berties_books_app',
-    password: 'qwertyuiop',
-    database: 'berties_books',
-    waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0,
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_DATABASE,
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0,
 });
+
 global.db = db;
 
 

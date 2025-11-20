@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title><%=shopData.shopName%></title>
+  <link rel="stylesheet" type="text/css" href="/main.css" />
+</head>
+<body>
+  <header>
+    <h1>Bertie’s Book Shop</h1>
+  </header>
+
+  <main>
+    <h2>Here are the registered users:</h2>
+
+<ul>
+  <% users.forEach(function(user) { %>
+    <li>
+      <%= user.username %> – 
+      <%= user.first %> <%= user.last %> – 
+      <%= user.email %>
+    </li>
+  <% }); %>
+</ul>
+
+  </main>
+</body>
+</html>

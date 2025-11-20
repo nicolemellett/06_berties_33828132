@@ -1,0 +1,25 @@
+<h2>Login Audit Log</h2>
+<table border="1">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Username</th>
+      <th>User ID</th>
+      <th>Status</th>
+      <th>IP Address</th>
+      <th>Timestamp</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% auditLogs.forEach(log => { %>
+      <tr>
+        <td><%= log.id %></td>
+        <td><%= log.username %></td>
+        <td><%= log.user_id %></td>
+        <td><%= log.status %></td>
+        <td><%= log.ip_address %></td>
+        <td><%= log.timestamp %></td>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>
