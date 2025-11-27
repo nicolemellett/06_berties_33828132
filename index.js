@@ -28,7 +28,7 @@ app.use(session({
 // Tell Express that we want to use EJS as the templating engine
 app.set('view engine', 'ejs')
 
-app.use('/users', usersRouter);
+//app.use('/users', usersRouter);
 
 // Set up the body parser 
 //app.use(express.urlencoded({ extended: true }))
