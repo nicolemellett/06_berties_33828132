@@ -10,9 +10,9 @@ const expressSanitizer = require('express-sanitizer');
 // Create the express application object
 const app = express()
 const port = 8000
-const usersRouter = require('./routes/users');
+// const usersRouter = require('./routes/users');
 
-app.use(express.urlencoded({ extended: true })); // for form submissions
+//app.use(express.urlencoded({ extended: true })); // for form submissions
 app.use(express.json()); // optional, if you also send JSON
 app.use(expressSanitizer());
 
