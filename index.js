@@ -12,7 +12,7 @@ const app = express()
 const port = 8000
 // const usersRouter = require('./routes/users');
 
-//app.use(express.urlencoded({ extended: true })); // for form submissions
+app.use(express.urlencoded({ extended: true })); // for form submissions
 app.use(express.json()); // optional, if you also send JSON
 app.use(expressSanitizer());
 
@@ -31,7 +31,7 @@ app.set('view engine', 'ejs')
 app.use('/users', usersRouter);
 
 // Set up the body parser 
-app.use(express.urlencoded({ extended: true }))
+//app.use(express.urlencoded({ extended: true }))
 
 // Set up public folder (for css and static js)
 app.use(express.static(path.join(__dirname, 'public')))
