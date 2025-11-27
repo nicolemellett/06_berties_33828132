@@ -1,4 +1,5 @@
 // Import express and ejs
+var session = require('express-session');
 var express = require ('express')
 var ejs = require('ejs')
 const path = require('path')
@@ -13,6 +14,14 @@ const usersRouter = require('./routes/users');
 app.use(express.urlencoded({ extended: true })); // for form submissions
 app.use(express.json()); // optional, if you also send JSON
 
+app.use(session({
+    secret: 'somerandomstuff',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        expires: 600000
+    }
+}))
 
 // Tell Express that we want to use EJS as the templating engine
 app.set('view engine', 'ejs')
@@ -28,16 +37,7 @@ app.use(express.static(path.join(__dirname, 'public')))
 // Define our application-specific data
 app.locals.shopData = {shopName: "Bertie's Books"}
 
-// Define the database connection pool
-//const db = mysql.createPool({
-   // host: 'localhost',
-   // user: 'berties_books_app',
-  //  password: 'qwertyuiop',
-  //  database: 'berties_books',
-   // waitForConnections: true,
- //   connectionLimit: 10,
-  //  queueLimit: 0,
-//});
+
 const db = mysql.createPool({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,

@@ -3,6 +3,13 @@ const express = require("express")
 const router = express.Router()
 const bcrypt = require('bcrypt')
 
+const redirectLogin = (req, res, next) => {
+    if (!req.session.userId ) {
+      res.redirect('/users/login') // redirect to the login page
+    } else { 
+        next (); // move to the next middleware function
+    } 
+}
 
 const recordLoginAttempt = (username, userId, status, req) => {
   const ip = req.ip || req.connection.remoteAddress;
@@ -62,7 +69,7 @@ router.post('/registered', function (req, res, next) {
 }); 
 
 
-router.get('/list', function(req, res, next) {
+router.get('/list', redirectLogin, function(req, res, next) {
     let sqlquery = "SELECT username, first, last, email FROM users"; 
     // (We deliberately do NOT select hashedPassword)
 
@@ -79,42 +86,7 @@ router.get('/login', (req, res) => {
   res.render('login.ejs'); // renders login.ejs
 });
 
-/*  router.post('/loggedin', (req, res) => {
-  const { username, password } = req.body;
 
-  // 1. Select the hashed password for the user from the database
-  const sql = 'SELECT hashedPassword FROM users WHERE username = ?';
-  db.query(sql, [username], (err, results) => {
-    if (err) {
-      console.error(err);
-      return res.send('Database error');
-    }
-
-    if (results.length === 0) {
-      // User not found
-      return res.send('Login failed: user not found');
-    }
-
-    const hashedPassword = results[0].hashedPassword;
-
-    // 2. Compare the password supplied with the password in the database
-    bcrypt.compare(password, hashedPassword, (err, result) => {
-      if (err) {
-        console.error(err);
-        return res.send('Error checking password');
-      }
-
-      if (result === true) {
-        // Passwords match
-        res.send(`Login successful! Welcome, ${username}`);
-      } else {
-        // Passwords do not match
-        res.send('Login failed: incorrect password');
-      }
-    });
-  });
-});
-*/
 
 router.post('/loggedin', (req, res) => {
   const { username, password } = req.body;
@@ -141,6 +113,8 @@ router.post('/loggedin', (req, res) => {
 
       if (result === true) {
         // Success → record login
+        req.session.userId = req.body.username
+
         recordLoginAttempt(username, user.id, 'success', req);
         res.send(`Login successful! Welcome, ${username}`);
       } else {
@@ -151,9 +125,19 @@ router.post('/loggedin', (req, res) => {
     });
   });
 });
+// Logout route
+router.get('/logout', redirectLogin, (req, res) => {
+    req.session.destroy(err => {
+        if (err) {
+            console.error(err);
+            return res.redirect('./'); // redirect home if error
+        }
+        res.send('You are now logged out. <a href="./">Home</a>');
+    });
+});
 
 
-router.get('/audit', (req, res) => {
+router.get('/audit', redirectLogin, (req, res) => {
  //if (!req.session.user || !req.session.user.isAdmin) {
    // return res.status(403).send("Access denied");
   //}
