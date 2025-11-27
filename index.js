@@ -5,6 +5,7 @@ var ejs = require('ejs')
 const path = require('path')
 require('dotenv').config();
 var mysql = require('mysql2');
+const expressSanitizer = require('express-sanitizer');
 
 // Create the express application object
 const app = express()
@@ -13,6 +14,7 @@ const usersRouter = require('./routes/users');
 
 app.use(express.urlencoded({ extended: true })); // for form submissions
 app.use(express.json()); // optional, if you also send JSON
+app.use(expressSanitizer());
 
 app.use(session({
     secret: 'somerandomstuff',

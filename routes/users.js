@@ -2,6 +2,7 @@
 const express = require("express")
 const router = express.Router()
 const bcrypt = require('bcrypt')
+const { check, validationResult } = require('express-validator');
 
 const redirectLogin = (req, res, next) => {
     if (!req.session.userId ) {
@@ -29,7 +30,16 @@ router.get('/register', function (req, res, next) {
 
 
 
-router.post('/registered', function (req, res, next) {
+/* router.post('/registered', function (req, res, next) {
+    
+  [check('email').isEmail(), check('username').isLength({ min: 5, max: 20})], 
+  function (req, res, next) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        res.render('./register')
+    }
+
+   else {
 
     const plainPassword = req.body.password
 
@@ -62,11 +72,84 @@ router.post('/registered', function (req, res, next) {
             res.send(output)
         })
 
-    }) // end bcrypt.hash
+    }) 
 
-    // saving data in database
-    // res.send(' Hello '+ req.body.first + ' '+ req.body.last +' you are now registered!  We will send an email to you at ' + req.body.email);                                                                              
-}); 
+  }
+                                                                          
+); 
+*/
+
+
+router.post(
+  '/registered',
+  [
+    check('email').isEmail(),
+    check('username').isLength({ min: 4, max: 20 }),
+    check('password').isLength({ min: 6 }),
+    check('first').notEmpty(),
+    check('last').notEmpty()
+
+  ],
+  function (req, res, next) {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      // Validation errors → re-render registration page with errors
+      return res.render('./register');
+    }
+
+    const first = req.sanitize(req.body.first);
+    const last = req.sanitize(req.body.last);
+    const username = req.sanitize(req.body.username);
+    const email = req.sanitize(req.body.email);
+
+
+    const plainPassword = req.body.password;
+
+    bcrypt.hash(plainPassword, saltRounds, function (err, hashedPassword) {
+      if (err) {
+        console.error(err);
+        return res.send('Error hashing password');
+      }
+
+      const sqlquery =
+        'INSERT INTO users (username, first, last, email, hashedPassword) VALUES (?,?,?,?,?)';
+      const newrecord = [
+        req.body.username,
+        req.body.first,
+        req.body.last,
+        req.body.email,
+        hashedPassword
+      ];
+
+      db.query(sqlquery, newrecord, (err, result) => {
+        if (err) {
+          console.error(err);
+          return res.send('Database error');
+        }
+
+        // Output confirmation
+        let output =
+          'Hello ' +
+          req.body.first +
+          ' ' +
+          req.body.last +
+          ', you are now registered! We will send an email to ' +
+          req.body.email +
+          '<br>';
+
+        output +=
+          'Your password is: ' +
+          req.body.password +
+          '<br>Your hashed password is: ' +
+          hashedPassword;
+
+        res.send(output);
+      }); // end db.query
+    }); // end bcrypt.hash
+  } // end route handler
+); // end router.post
+
 
 
 router.get('/list', redirectLogin, function(req, res, next) {
