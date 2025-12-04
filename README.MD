@@ -20,3 +20,38 @@ To secure database credentials, we used the dotenv Node.js module. A .env file w
 - `/list` → restricted to logged-in users
 - `/audit` → restricted to logged-in users
 - All other pages (home, login, register) → accessible to all as no security / confidentiality issues
+
+## Bookshop API
+
+Base URL: `http://localhost:8000/api`
+
+### Endpoints
+
+#### GET `/books`
+
+Retrieve a list of books in JSON format.
+
+**Query Parameters** (all optional):
+
+- `search` → search term for title or author  
+- `minprice` → minimum price filter  
+- `maxprice` → maximum price filter  
+- `sort` → sort results by `name` or `price`
+
+**Examples:**
+
+- Get all books:  
+`GET /api/books`
+
+- Search for books with "world":  
+`GET /api/books?search=world`
+
+- Books priced between £5 and £10:  
+`GET /api/books?minprice=5&maxprice=10`
+
+- Sort books by title:  
+`GET /api/books?sort=name`
+
+- Combine filters:  
+`GET /api/books?search=universe&minprice=5&sort=price`
+
